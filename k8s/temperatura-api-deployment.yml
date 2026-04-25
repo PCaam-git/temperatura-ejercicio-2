@@ -1,0 +1,46 @@
+# Servicio que expone el backend de temperaturas
+apiVersion: v1
+kind: Service
+metadata:
+# Nombre interno del servicio dentro del clúster
+  name: temperatura-api-svc
+  labels:
+    app: temperaturas-backend
+spec:
+  ports:
+  # Puerto por el que se expone el servicio
+    - port: 5000
+  selector:
+    app: temperaturas-backend
+    tier: backend
+  type: LoadBalancer
+---
+# Deployment que define cómo se crean y mantienen los pods de la API
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: temperatura-api-deploy
+  labels:
+    app: temperaturas-backend
+spec:
+  selector:
+    matchLabels:
+    # Debe coincidir con las etiquetas de la plantilla del pod
+      app: temperaturas-backend
+      tier: backend
+  strategy:
+  # Reemplaza los pods anteriores al desplegar una nueva versión
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: temperaturas-backend
+        tier: backend
+    spec:
+      containers:
+      # Imagen Docker que se desplegará en el contenedor
+      - name: temperaturas-backend
+        image: pcaamano/temperaturas-backend:latest
+        ports:
+        # Puerto interno en el que escucha la aplicación dentro del contenedor
+        - containerPort: 5000

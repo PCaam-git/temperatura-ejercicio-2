@@ -1,0 +1,53 @@
+# Este archivo define un servicio y un despliegue para la aplicación frontend de temperaturas.
+# El servicio expone el frontend al exterior, mientras que el deployment se encarga de crear
+apiVersion: v1
+kind: Service
+metadata:
+# Nombre interno del servicio del frontend
+  name: temperatura-web-svc
+  labels:
+    app: temperaturas-frontend
+spec:
+  ports:
+  # Puerto externo del servicio
+    - port: 80
+    # Puerto interno del contenedor al que se redirige el tráfico
+      targetPort: 3001
+  selector:
+  # Este servicio enviará tráfico a los pods con estas etiquetas
+    app: temperaturas-frontend
+    tier: frontend
+  type: LoadBalancer
+---
+# Deployment que define cómo se crean y mantienen los pods del frontend
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: temperatura-web-deploy
+  labels:
+    app: temperaturas-frontend
+spec:
+  selector:
+    matchLabels:
+    # Debe coincidir con las etiquetas de la plantilla del pod
+      app: temperaturas-frontend
+      tier: frontend
+  strategy:
+  # Reemplaza los pods anteriores al desplegar una nueva versión
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: temperaturas-frontend
+        tier: frontend
+    spec:
+      containers:
+      - name: temperaturas-frontend
+      # Imagen Docker que se desplegará en el contenedor
+        image: pcaamano/temperaturas-frontend:latest
+        env:
+        - name: TEMP_SERVER
+          value: "temperatura-api-svc:5000"
+        ports:
+        # Puerto interno en el que escucha la aplicación frontend
+        - containerPort: 3001
