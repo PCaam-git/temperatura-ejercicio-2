@@ -42,9 +42,9 @@ jobs:
       with:
         images: pcaamano/temperaturas-backend
         flavor: |
-          latest=true
+          latest=false
         tags: |
-          type=raw,value=latest
+          type=raw,value=01
 
 # Quinto paso: permite construir el contenedor y enviarlo a Docker hub. Context es la carpeta donde se encuentra el Dockerfile, en este caso ./backend. 
     - name: Build and Push Backend to Docker Hub
@@ -65,9 +65,9 @@ jobs:
       with:
         images: pcaamano/temperaturas-frontend
         flavor: |
-          latest=true
+          latest=false
         tags: |
-          type=raw,value=latest
+          type=raw,value=01
 
     - name: Build and Push Frontend to Docker Hub
       id: docker_build_frontend
