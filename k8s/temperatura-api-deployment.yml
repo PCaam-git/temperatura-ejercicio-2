@@ -40,7 +40,7 @@ spec:
       containers:
       # Imagen Docker que se desplegará en el contenedor
       - name: temperaturas-backend
-        image: pcaamano/temperaturas-backend:latest
+        image: pcaamano/temperaturas-backend:01
         ports:
         # Puerto interno en el que escucha la aplicación dentro del contenedor
         - containerPort: 5000
